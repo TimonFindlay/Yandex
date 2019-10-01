@@ -1,0 +1,109 @@
+#define PIN_PEZ 3 
+#define PIN_POT A0 
+#define PIN_BOT 7 
+#define PIN_CEP 8 
+bool alarm; 
+bool opdoor; 
+bool tadoor; 
+bool perimetr; 
+bool systemON; 
+long time=0; 
+
+void setup() 
+{ 
+pinMode(PIN_PEZ, OUTPUT); 
+pinMode(13,OUTPUT); 
+
+pinMode(PIN_POT, INPUT); 
+pinMode(PIN_BOT, INPUT); 
+  pinMode(PIN_CEP, INPUT);
+
+} 
+
+void loop(){ 
+
+alarm=0; 
+opdoor=0; 
+tadoor=0; 
+systemON = 1; 
+perimetr=0; 
+
+
+if (analogRead(PIN_POT)!=0 && systemON == 1)// Если дверь открывается 
+
+{ 
+alarm=1; 
+opdoor=1; 
+delay(1000); 
+
+} 
+
+
+if (digitalRead(PIN_BOT)== HIGH && systemON == 1) { // Если кнопка нажата значит двери коснулись 
+
+alarm=1; 
+tadoor=1; 
+delay(1000); 
+
+} 
+if (digitalRead(PIN_CEP)== HIGH && systemON == 1) { //имитация разрыва провода периметра по кнопке 
+alarm=1; 
+perimetr=1; 
+delay(1000); 
+
+} 
+if(alarm == 1) 
+{ 
+digitalWrite(13, HIGH); 
+tone(PIN_PEZ,1000,1000); 
+digitalWrite(13, LOW); 
+delay(1000); 
+} 
+if(time==0) 
+
+Serial.println("Time\tSystem\t\tDoorOpen\tDoorTouch\tPerimeter"); 
+else 
+{ 
+Serial.println("Time\tSystem\t\tDoorOpen\tDoorTouch\tPerimeter"); 
+Serial.print(time); 
+Serial.print("\t"); 
+
+if(systemON == 1) 
+Serial.print("YES"); 
+else 
+Serial.print("NO"); 
+
+Serial.print("\t\t"); 
+
+if(opdoor == 1) 
+Serial.print("YES"); 
+else 
+Serial.print("NO"); 
+
+Serial.print("\t\t"); 
+
+if(tadoor == 1) 
+Serial.print("YES"); 
+else 
+Serial.print("NO"); 
+
+Serial.print("\t\t"); 
+
+if(perimetr == 1) 
+Serial.print("YES"); 
+else 
+Serial.print("NO"); 
+
+if(alarm == 1) 
+{ 
+Serial.print("\t\t"); 
+Serial.print("ALARM!!"); 
+Serial.println(""); 
+} 
+else 
+Serial.println(""); 
+
+} 
+
+time++; 
+}
